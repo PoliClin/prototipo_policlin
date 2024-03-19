@@ -8,17 +8,17 @@ O PoliClin é um sistema projetado para a Unipeclin que visa gerenciar salas e p
 
 Para rodar o protótipo do projeto, siga estas etapas:
 
-**1. Clone o repositório do projeto:**
+**1. Clone o repositório do projeto:**  
    ```bash
    $ git clone https://github.com/PoliClin/prototipo_policlin.git
    ```
 
-**2. Instale os pacotes do arquivo *requirements.txt*:**
+**2. Instale os pacotes do arquivo *requirements.txt*:**  
     ```bash
     $ pip install -r requirements.txt
     ```
 
-**3. Execute o servidor (localhost):**
+**3. Execute o servidor (localhost):**  
     ```bash
     $ python manage.py runserver
     ```
