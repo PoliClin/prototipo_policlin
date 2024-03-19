@@ -14,12 +14,12 @@ Para rodar o protótipo do projeto, siga estas etapas:
    ```
 
 **2. Instale os pacotes do arquivo *requirements.txt*:**  
-    ```bash
-    $ pip install -r requirements.txt
-    ```
+   ```bash
+   $ pip install -r requirements.txt
+    ```  
 
 **3. Execute o servidor (localhost):**  
-    ```bash
-    $ python manage.py runserver
-    ```
+   ```bash
+   $ python manage.py runserver
+   ```
 
