@@ -17,6 +17,7 @@ class Research(models.Model):
     outpatient_care = models.BooleanField(verbose_name="Atendimento ambulatorial", default=False, null = False, blank= False)
     is_active = models.BooleanField(verbose_name = "Ativa", default=True, null=False, blank=False, help_text="Desmarcar quando um projeto não apresentar atividade após 120 dias.")
     #assigned_room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Sala atribuída", help_text="Sala atribuída ao projeto, caso ainda não possua, deixar em branco.")
+    # não é necessário atribuir uma sala no cadastro da pesquisa
 
     def __str__(self):
         return self.name
@@ -38,5 +39,5 @@ class ScheduledTimes(models.Model):
         return f"{self.research} - {self.room}"
     
     class Meta:
-        verbose_name = "Pesquisas com horário marcado"
+        verbose_name = "Pesquisa com horário marcado"
         verbose_name_plural = "Pesquisas com horários marcados"
