@@ -2,8 +2,22 @@ from datetime import date, timedelta
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+
 from rooms.models import Room
 from system_constants.models import Schedule, Weekdays
+from django.contrib.auth.models import User
+from .models import Research, ScheduledTimes
+
+from .forms import ResearchForm
+
+from .apps import ResearchManagementConfig
+
+from django.contrib.auth.models import User, Group
+from django.contrib.admin.sites import AdminSite
+from .models import Research, ScheduledTimes
+from .forms import ResearchForm
+from .admin import ResearchAdmin
+
 
 from research_management.models import Research, ScheduledTimes
 
@@ -99,3 +113,85 @@ class ScheduledTimesModelTests(TestCase):
     def test_invalid_weekday_scheduled_time_creation(self):
         """Valida objeto inexistente com dia de semana inválido."""
         self.assertFalse(self.scheduled_time.weekday.filter(name="Sábado").exists())
+
+class ResearchFormTest(TestCase):
+    def test_researchers_query_set(self):
+        """
+        Verifica se o queryset de 'researchers' está filtrando corretamente os usuários com 'pesquisador' no username.
+        """
+        form = ResearchForm()
+        query_set = form.fields['researchers'].queryset
+        self.assertTrue(all('pesquisador' in user.username for user in query_set))
+
+    def test_main_researcher_query_set(self):
+        """
+        Verifica se o queryset de 'main_researcher' está filtrando corretamente os usuários com 'pesquisador' no username.
+        """
+        form = ResearchForm()
+        query_set = form.fields['main_researcher'].queryset
+        self.assertTrue(all('pesquisador' in user.username for user in query_set))
+
+
+class ScheduledTimesFormTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username='pesquisador1')
+        self.research = Research.objects.create(name='Test Research')
+        self.room = Room.objects.create(number='101')
+    
+
+class ResearchManagementConfigTest(TestCase):
+    def test_default_auto_field(self):
+        """
+        Verifica se o default_auto_field é definido corretamente.
+        """
+        self.assertEqual(ResearchManagementConfig.default_auto_field, 'django.db.models.BigAutoField')
+
+    def test_name(self):
+        """
+        Verifica se o nome da aplicação está correto.
+        """
+        self.assertEqual(ResearchManagementConfig.name, 'research_management')
+
+    def test_verbose_name(self):
+        """
+        Verifica se o verbose_name está definido corretamente.
+        """
+        self.assertEqual(ResearchManagementConfig.verbose_name, 'Gerenciamento de Pesquisas')
+
+class CustomAdminSite(AdminSite):
+    def get_registered_model(self, model):
+        """
+        Retorna o modelo registrado no admin ou None se não estiver registrado.
+        """
+        if model == Group:
+            return None
+        return super().get_registered_model(model)
+
+class ResearchAdminTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username='researcher1')
+        self.research = Research.objects.create(name='Test Research', main_researcher=self.user)
+
+    def test_list_display(self):
+        """
+        Verifica se os campos especificados em list_display estão corretos.
+        """
+        self.assertEqual(ResearchAdmin.list_display, ('is_active', 'name', 'main_researcher', 'expected_number_of_patients', 'outpatient_care'))
+
+    def test_list_filter(self):
+        """
+        Verifica se os campos especificados em list_filter estão corretos.
+        """
+        self.assertEqual(ResearchAdmin.list_filter, ('main_researcher',))
+
+    def test_list_display_links(self):
+        """
+        Verifica se os campos especificados em list_display_links estão corretos.
+        """
+        self.assertEqual(ResearchAdmin.list_display_links, ('name',))
+
+    def test_form(self):
+        """
+        Verifica se o formulário associado ao ResearchAdmin é o ResearchForm.
+        """
+        self.assertEqual(ResearchAdmin.form, ResearchForm)
